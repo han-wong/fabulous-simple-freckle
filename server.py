@@ -1,0 +1,66 @@
+from werkzeug.exceptions import Forbidden
+from flask import Flask
+from flask import request
+from flask_hangman import create_app
+
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
+
+dotenv_path = join(dirname(__file__), ".env")
+load_dotenv(dotenv_path)
+
+# os.system('date +"Today is: %A %d %B"')
+
+
+def verify_signature(payload_body, secret_token, signature_header):
+    """Verify that the payload was sent from GitHub by validating SHA256.
+
+    Raise and return 403 if not authorized.
+
+    Args:
+        payload_body: original request body to verify (request.body())
+        secret_token: GitHub app webhook token (WEBHOOK_SECRET)
+        signature_header: header received from GitHub (x-hub-signature-256)
+    """
+    import hashlib
+    import hmac
+
+    if not signature_header:
+        return Forbidden(description="x-hub-signature-256 header is missing!")
+
+    hash_object = hmac.new(secret_token, msg=payload_body, digestmod=hashlib.sha256)
+    expected_signature = "sha256=" + hash_object.hexdigest()
+    if not hmac.compare_digest(expected_signature, signature_header):
+        return Forbidden(description="Request signatures didn't match!")
+
+
+app = create_app()
+app.config.update(
+    SECRET_KEY=os.environ.get("SECRET_KEY")
+)
+
+
+@app.route("/git", methods=["GET", "POST"])
+def git():
+    if request.method == "POST":
+        PAYLOAD = request.get_data()
+        TOKEN = os.environ.get("WEBHOOK")
+        HEADER = request.headers.get("X-Hub-Signature-256")
+
+        if len(PAYLOAD) > 1 * 1024 * 1024:
+            return Forbidden(description="Payload bigger than 1 MB")
+
+        verify_signature(PAYLOAD, TOKEN.encode("utf-8"), HEADER.encode("utf-8"))
+
+        import subprocess
+
+        git_message = subprocess.check_output("git -C flask_hangman pull", shell=True)
+        os.system("refresh")
+
+        return git_message
+
+    return "<h1>Testing the Flask Application Factory Pattern</h1>"
+
+if __name__ == "__main__":
+    app.run()
