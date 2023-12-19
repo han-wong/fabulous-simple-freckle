@@ -30,7 +30,7 @@ def verify_signature(payload_body, secret_token, signature_header):
         return Forbidden(description="x-hub-signature-256 header is missing!")
 
     hash_object = hmac.new(secret_token, msg=payload_body, digestmod=hashlib.sha256)
-    expected_signature = "sha256=" + hash_object.hexdigest()
+    expected_signature = ("sha256=" + hash_object.hexdigest()).encode()
     if not hmac.compare_digest(expected_signature, signature_header):
         return Forbidden(description="Request signatures didn't match!")
 
@@ -48,7 +48,7 @@ def home():
 def result():
     if request.method == "POST" and len(dict(request.form)) > 0:
         userdata = dict(request.form)
-        book = userdata["book"][0] if not len(userdata["book"][0]) ==1 else userdata["book"]
+        book = userdata["book"]
         character = model.get_character(book)
         gif_url = model.get_gif(character)
         return render_template("result.html", character=character, gif_url=gif_url)
@@ -66,7 +66,7 @@ def git():
         if len(PAYLOAD) > 1 * 1024 * 1024:
             return Forbidden(description="Payload bigger than 1 MB")
 
-        verify_signature(PAYLOAD, TOKEN.encode("utf-8"), HEADER.encode("utf-8"))
+        verify_signature(PAYLOAD, TOKEN, HEADER.encode())
 
         import subprocess
 
