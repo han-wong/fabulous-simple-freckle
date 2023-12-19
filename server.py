@@ -47,9 +47,7 @@ def home():
 @app.route("/result", methods=["GET", "POST"])
 def result():
     if request.method == "POST" and len(dict(request.form)) > 0:
-        print(request.form)
         userdata = dict(request.form)
-        print(userdata)
         book = userdata["book"][0] if not len(userdata["book"][0]) ==1 else userdata["book"]
         character = model.get_character(book)
         gif_url = model.get_gif(character)
@@ -73,7 +71,10 @@ def git():
         import subprocess
 
         git_message = subprocess.check_output(
-            "git -C fabulous-simple-freckle pull", shell=True
+            "git reset --hard HEAD", shell=True
+        )
+        git_message += subprocess.check_output(
+            "git pull", shell=True
         )
         os.system("refresh")
 
