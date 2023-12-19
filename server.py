@@ -1,9 +1,12 @@
 from werkzeug.exceptions import Forbidden
 from flask import Flask
+from flask import render_template
 from flask import request
-from flask_hangman import create_app
+#from flask_hangman import create_app
 
 import os
+import model
+
 from os.path import join, dirname
 from dotenv import load_dotenv
 
@@ -34,11 +37,28 @@ def verify_signature(payload_body, secret_token, signature_header):
     if not hmac.compare_digest(expected_signature, signature_header):
         return Forbidden(description="Request signatures didn't match!")
 
+app = Flask(__name__)
+#app = create_app()
+#app.config.update(
+#    SECRET_KEY=os.environ.get("SECRET_KEY")
+#)
 
-app = create_app()
-app.config.update(
-    SECRET_KEY=os.environ.get("SECRET_KEY")
-)
+print(os.environ.get("SECRET_KEY"))
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/result", methods=["GET", "POST"])
+def result():
+  if request.method == 'POST' and len(dict(request.form)) > 0:
+    userdata = dict(request.form)
+    print(userdata)
+    book = userdata["book"][0]
+    character = model.get_character(book)
+    gif_url = model.get_gif(character)
+    return render_template("result.html", character=character, gif_url=gif_url)
+  else:
+    return "Sorry, there was an error."
 
 
 @app.route("/git", methods=["GET", "POST"])
@@ -55,7 +75,7 @@ def git():
 
         import subprocess
 
-        git_message = subprocess.check_output("git -C flask_hangman pull", shell=True)
+        git_message = subprocess.check_output("git -C fabulous-simple-freckle pull", shell=True)
         os.system("refresh")
 
         return git_message
