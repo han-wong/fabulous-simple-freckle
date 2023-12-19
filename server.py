@@ -3,8 +3,6 @@ from flask import Flask
 from flask import render_template
 from flask import request
 
-# from flask_hangman import create_app
-
 import os
 import model
 
@@ -13,8 +11,6 @@ from dotenv import load_dotenv
 
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
-
-# os.system('date +"Today is: %A %d %B"')
 
 
 def verify_signature(payload_body, secret_token, signature_header):
@@ -40,12 +36,7 @@ def verify_signature(payload_body, secret_token, signature_header):
 
 
 app = Flask(__name__)
-# app = create_app()
-# app.config.update(
-#    SECRET_KEY=os.environ.get("SECRET_KEY")
-# )
-
-print(os.environ.get("SECRET_KEY"))
+app.config.update(SECRET_KEY=os.environ.get("SECRET_KEY"))
 
 
 @app.route("/")
@@ -56,9 +47,10 @@ def home():
 @app.route("/result", methods=["GET", "POST"])
 def result():
     if request.method == "POST" and len(dict(request.form)) > 0:
+        print(request.form)
         userdata = dict(request.form)
         print(userdata)
-        book = userdata["book"][0]
+        book = userdata["book"][0] if not len(userdata["book"][0]) ==1 else userdata["book"]
         character = model.get_character(book)
         gif_url = model.get_gif(character)
         return render_template("result.html", character=character, gif_url=gif_url)
