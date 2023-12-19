@@ -19,9 +19,9 @@ def verify_signature(payload_body, secret_token, signature_header):
     Raise and return 403 if not authorized.
 
     Args:
-        payload_body: original request body to verify (request.body())
-        secret_token: GitHub app webhook token (WEBHOOK_SECRET)
-        signature_header: header received from GitHub (x-hub-signature-256)
+        (str) payload_body: original request body to verify (request.body())
+        (bytes) secret_token: GitHub app webhook token (WEBHOOK_SECRET)
+        (bytes) signature_header: header received from GitHub (x-hub-signature-256)
     """
     import hashlib
     import hmac
@@ -60,13 +60,13 @@ def result():
 def git():
     if request.method == "POST":
         PAYLOAD = request.get_data()
-        TOKEN = os.environ.get("WEBHOOK")
-        HEADER = request.headers.get("X-Hub-Signature-256")
+        TOKEN = os.environ.get("WEBHOOK").encode()
+        HEADER = request.headers.get("X-Hub-Signature-256").encode()
 
         if len(PAYLOAD) > 1 * 1024 * 1024:
             return Forbidden(description="Payload bigger than 1 MB")
 
-        verify_signature(PAYLOAD, TOKEN, HEADER.encode())
+        verify_signature(PAYLOAD, TOKEN, HEADER)
 
         import subprocess
 
