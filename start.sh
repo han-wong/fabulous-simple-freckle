@@ -5,4 +5,4 @@
 # python3 server.py
 
 # For production use: 
-python3 -m gunicorn pokemon:app -w 1 --log-file -
+python3 -m gunicorn "pokemon:create_app()" -w 1 --log-file -

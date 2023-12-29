@@ -3,6 +3,7 @@ import random
 import json
 
 from flask import (
+    current_app,
     session,
 )
 
@@ -35,7 +36,7 @@ def create(length_of_id):
 
 
 def fetch_pokemon(id):
-    url = f"http://localhost:8000/api/pokemon/{id}"
+    url = current_app.config["POKEMON"] + id
     res = requests.get(url)
     return json.loads(res.content)
 
