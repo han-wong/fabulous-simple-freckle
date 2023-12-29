@@ -24,7 +24,8 @@ def new_game():
 
 @bp.route("/play", methods=["GET", "POST"])
 def play():
-    if game_id := request.args.get("game_id"):
+    game_id = request.args.get("game_id")
+    if game_id:
         game.load_game(game_id)
     else:
         return new_game()
