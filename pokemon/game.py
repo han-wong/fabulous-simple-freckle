@@ -23,7 +23,7 @@ def create(length_of_id):
     pokemon_id = reset_pokemon(0)
     score = reset_score(0)
     streak = reset_streak(0)
-    print(f"{pokemon_id = }")
+    print(f"pokemon_id = {pokemon_id}")
     if pokemon_id:
         db = get_db()
         db.execute(

@@ -11,8 +11,8 @@
 - git init
 - git branch -m main
 - git remote add origin git@github.com:han-wong/buttered-oil-vacation.git
-- git branch --set-upstream-to=origin/main main
 - git fetch origin
+- git branch --set-upstream-to=origin/main main
 - git reset --hard origin/main
 - git reset --hard HEAD
 
