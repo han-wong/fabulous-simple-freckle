@@ -2,8 +2,13 @@ from werkzeug.exceptions import Forbidden
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import session
+from flask import url_for
+from flask import redirect
 
 import os
+
+import pokemon.game as game
 import model
 
 from os.path import join, dirname
@@ -82,6 +87,7 @@ def keep_up_to_date_with_main():
     git_message += subprocess.check_output("git pull", shell=True)
     return git_message
 
+app.register_blueprint(game.bp)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000, debug=True)
