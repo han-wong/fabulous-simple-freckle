@@ -31,7 +31,7 @@ def play():
 
     pokemon = game.load_pokemon()
     name = pokemon["name"].upper()
-    print(f"{name = }")
+    print(f"name = {name}")
 
     if request.method == "POST":
         value = request.json.get("value")
@@ -59,7 +59,7 @@ def play():
         print(session["pokemon"])
 
     guess = game.get_guess(name)
-    print(f"{guess = }")
+    print(f"guess = {guess}")
 
     image = pokemon["original"]
     name = "It's {}!".format(pokemon["name"])

@@ -78,7 +78,7 @@ def load_next_pokemon():
 
 def load_pokemon():
     _id = session.get("pokemon").get("id")
-    print(f"{_id = }")
+    print(f"_id = {_id}")
     # 787 TAPU BULU
     if not _id in cache:
         pokemon = fetch_pokemon(_id)
