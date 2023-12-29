@@ -86,8 +86,8 @@ def play():
 @bp.route("/game_over")
 def game_over():
     print("game_over")
-    print(f'{session.get("life") = }')
-    print(f'{session.get("score") = }')
+    print(f'life = {session.get("life")}')
+    print(f'score = {session.get("score")}')
 
     return (
         json.dumps(
