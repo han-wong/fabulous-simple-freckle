@@ -5,10 +5,23 @@
 
 import sqlite3
 
+def select_all_games(conn):
+    """
+    Query all rows in the tasks table
+    :param conn: the Connection object
+    :return:
+    """
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM game")
 
+    rows = cur.fetchall()
+
+    for row in rows:
+        print(row)
+        
 # Make a connection to the SQLite DB
 
-dbCon = sqlite3.connect("pokemon.sqlite")
+dbCon = sqlite3.connect(".data/pokemon.sqlite")
 
 
 # Obtain a Cursor object to execute SQL statements
@@ -50,7 +63,7 @@ for table in tableList:
 
     print("**SQL Statement**: %s" % (table[4]))
 
-
+select_all_games(dbCon)
 # close the database connection
 
 dbCon.close()
