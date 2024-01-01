@@ -52,6 +52,7 @@ def verify_signature(payload_body, secret_token, signature_header):
 
 
 def keep_up_to_date_with_main():
-    git_message = subprocess.check_output("git reset --hard HEAD", shell=True)
-    git_message += subprocess.check_output("git pull", shell=True)
+    git_message = subprocess.check_output("git fetch", shell=True)
+    git_message += subprocess.check_output("git reset --hard origin/main", shell=True)
+    # git_message = subprocess.check_output("git reset --hard HEAD", shell=True)
     return git_message
