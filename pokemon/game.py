@@ -58,8 +58,9 @@ def get_current_word(name):
 
 def get_games_by_score():
     db = get_db()
-    sql = """SELECT player, score FROM game WHERE player IS NOT NULL AND score !=0 ORDER BY score DESC;"""
-    return db.execute(sql).fetchall()
+    return db.execute(
+        "SELECT player, score FROM game WHERE player IS NOT NULL AND score !=0 ORDER BY score DESC LIMIT 10;"
+    ).fetchall()
 
 
 def load_hi_score():
