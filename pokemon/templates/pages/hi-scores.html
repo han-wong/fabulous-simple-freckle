@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block header %}
+  <h2>
+    {% block title %}
+      Hi-Scores
+    {% endblock %}
+  </h2>
+{% endblock %}
+
+{% block content %}
+  {% for game in games %}
+    <article class="hi-score">
+      <p>{{ game['player'] }}</p>
+      <p>{{ game['score'] }}</p>
+    </article>
+  {% endfor %}
+{% endblock %}

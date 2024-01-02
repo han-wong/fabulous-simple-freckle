@@ -32,37 +32,56 @@
         <img src="data:image/png;base64,{{ pokemon }}" />
       </div>
     </div>
-    <h3>{{ name }}</h3>
-    <h2 id="player-guess">{{ guess }}</h2>
-    <div class="col-12 keyboard-buttons">
-      <input id="btnA" type="button" value="A" onclick="input(this);" />
-      <input id="btnB" type="button" value="B" onclick="input(this);" />
-      <input id="btnC" type="button" value="C" onclick="input(this);" />
-      <input id="btnD" type="button" value="D" onclick="input(this);" />
-      <input id="btnE" type="button" value="E" onclick="input(this);" />
-      <input id="btnF" type="button" value="F" onclick="input(this);" />
-      <input id="btnG" type="button" value="G" onclick="input(this);" />
-      <input id="btnH" type="button" value="H" onclick="input(this);" />
-      <input id="btnI" type="button" value="I" onclick="input(this);" />
-      <input id="btnJ" type="button" value="J" onclick="input(this);" />
-      <input id="btnK" type="button" value="K" onclick="input(this);" />
-      <input id="btnL" type="button" value="L" onclick="input(this);" />
-      <input id="btnM" type="button" value="M" onclick="input(this);" />
-      <input id="btnN" type="button" value="N" onclick="input(this);" />
-      <input id="btnO" type="button" value="O" onclick="input(this);" />
-      <input id="btnP" type="button" value="P" onclick="input(this);" />
-      <input id="btnQ" type="button" value="Q" onclick="input(this);" />
-      <input id="btnR" type="button" value="R" onclick="input(this);" />
-      <input id="btnS" type="button" value="S" onclick="input(this);" />
-      <input id="btnT" type="button" value="T" onclick="input(this);" />
-      <input id="btnU" type="button" value="U" onclick="input(this);" />
-      <input id="btnV" type="button" value="V" onclick="input(this);" />
-      <input id="btnW" type="button" value="W" onclick="input(this);" />
-      <input id="btnX" type="button" value="X" onclick="input(this);" />
-      <input id="btnY" type="button" value="Y" onclick="input(this);" />
-      <input id="btnZ" type="button" value="Z" onclick="input(this);" />
-    </div>
+    <h3>{{ header }}</h3>
+    {% if life %}
+    <h2 id="current-word">{{ current_word }}</h2>
+      <div class="col-12 keyboard-buttons">
+        <input class="keyboard-button" id="btnA" type="button" value="A" onclick="input(this);" />
+        <input class="keyboard-button" id="btnB" type="button" value="B" onclick="input(this);" />
+        <input class="keyboard-button" id="btnC" type="button" value="C" onclick="input(this);" />
+        <input class="keyboard-button" id="btnD" type="button" value="D" onclick="input(this);" />
+        <input class="keyboard-button" id="btnE" type="button" value="E" onclick="input(this);" />
+        <input class="keyboard-button" id="btnF" type="button" value="F" onclick="input(this);" />
+        <input class="keyboard-button" id="btnG" type="button" value="G" onclick="input(this);" />
+        <input class="keyboard-button" id="btnH" type="button" value="H" onclick="input(this);" />
+        <input class="keyboard-button" id="btnI" type="button" value="I" onclick="input(this);" />
+        <input class="keyboard-button" id="btnJ" type="button" value="J" onclick="input(this);" />
+        <input class="keyboard-button" id="btnK" type="button" value="K" onclick="input(this);" />
+        <input class="keyboard-button" id="btnL" type="button" value="L" onclick="input(this);" />
+        <input class="keyboard-button" id="btnM" type="button" value="M" onclick="input(this);" />
+        <input class="keyboard-button" id="btnN" type="button" value="N" onclick="input(this);" />
+        <input class="keyboard-button" id="btnO" type="button" value="O" onclick="input(this);" />
+        <input class="keyboard-button" id="btnP" type="button" value="P" onclick="input(this);" />
+        <input class="keyboard-button" id="btnQ" type="button" value="Q" onclick="input(this);" />
+        <input class="keyboard-button" id="btnR" type="button" value="R" onclick="input(this);" />
+        <input class="keyboard-button" id="btnS" type="button" value="S" onclick="input(this);" />
+        <input class="keyboard-button" id="btnT" type="button" value="T" onclick="input(this);" />
+        <input class="keyboard-button" id="btnU" type="button" value="U" onclick="input(this);" />
+        <input class="keyboard-button" id="btnV" type="button" value="V" onclick="input(this);" />
+        <input class="keyboard-button" id="btnW" type="button" value="W" onclick="input(this);" />
+        <input class="keyboard-button" id="btnX" type="button" value="X" onclick="input(this);" />
+        <input class="keyboard-button" id="btnY" type="button" value="Y" onclick="input(this);" />
+        <input class="keyboard-button" id="btnZ" type="button" value="Z" onclick="input(this);" />
+      </div>
+    {% else %}
+      <div class="col-12 game-over">
+        <h3>GAME OVER</h3>
+        <form method="post">
+          <fieldset>
+            <legend>Name</legend>
+            <p>
+              {# comment <label for="player-name">Name</label> #}
+              {# endcomment #}
+              <input id="player-name" type="text" name="player-name" placeholder="Enter your name" />
+            </p>
+            <p>
+              <input type="submit" value="Submit" />
+            </p>
+          </fieldset>
+        </form>
+      </div>
+    {% endif %}
   </div>
-  <script src="static/pokemon.js" defer></script>
+  <script src="static/play.js" defer></script>
   <noscript>Sorry, your browser does not support JavaScript!</noscript>
 {% endblock %}

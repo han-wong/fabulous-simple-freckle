@@ -2,102 +2,16 @@ import json
 
 from flask import (
     Blueprint,
-    session,
-    request,flash,
+    current_app,
     redirect,
-    url_for,
     render_template,
+    request,
+    session,
+    url_for,
 )
-
-from pokemon.database import get_db
 from pokemon import game
 
 bp = Blueprint("play", __name__)
-
-
-@bp.route("/new")
-def new_game():
-    game_id = game.create(10)
-
-    return redirect(url_for("play.play", game_id=game_id))
-
-
-@bp.route("/play", methods=["GET", "POST"])
-def play():
-    game_id = request.args.get("game_id")
-    if game_id:
-        game.load_game(game_id)
-    else:
-        return new_game()
-
-    pokemon = game.load_pokemon()
-    name = pokemon["name"].upper()
-    print(f"name = {name}")
-
-    if request.method == "POST":
-        value = request.json.get("value")
-        if not value in name:
-            session["life"] -= 1
-            session["streak"] = 0
-            flash(f"You lost a life!", category="error")
-
-        session["guess_player"] += value
-        game.save_game(game_id)
-        return (
-            json.dumps(
-                {
-                    "guess": game.get_guess(name),
-                    "life": session.get("life"),
-                    "streak": session.get("streak"),
-                }
-            ),
-            200,
-            {"ContentType": "application/json"},
-        )
-
-    else:
-        print("pass")
-        print(session["pokemon"])
-
-    guess = game.get_guess(name)
-    print(f"guess = {guess}")
-
-    image = pokemon["original"]
-    name = "It's {}!".format(pokemon["name"])
-    if "_" in guess:
-        image = pokemon["silhouette"]
-        name = "Who's That Pokémon?"
-    else:
-        game.load_next_pokemon()
-        game.save_game(game_id)
-
-    return render_template(
-        "pages/play.html",
-        guess=guess,
-        life=session.get("life"),
-        name=name,
-        pokemon=image,
-        hi_score=session.get("hi-score"),
-        score=session.get("score"),
-        streak=session.get("streak"),
-    )
-
-
-@bp.route("/game_over")
-def game_over():
-    print("game_over")
-    print(f'life = {session.get("life")}')
-    print(f'score = {session.get("score")}')
-
-    return (
-        json.dumps(
-            {
-                "score": session.get("score"),
-            }
-        ),
-        200,
-        {"ContentType": "application/json"},
-    )
 
 
 @bp.route("/guess", methods=["GET"])
@@ -105,10 +19,93 @@ def guess():
     return (
         json.dumps(
             {
-                "guess_exclude": session.get("guess_exclude"),
-                "guess_player": session.get("guess_player"),
+                "guess": session.get("guess"),
             }
         ),
         200,
         {"ContentType": "application/json"},
+    )
+
+
+@bp.route("/hi_scores", methods=["GET"])
+def hi_scores():
+    games = game.get_games_by_score()
+    for x in games:
+        current_app.logger.debug(f"games = {dict(x)}")
+    return render_template(
+        "pages/hi-scores.html",
+        games=games
+    )
+
+
+@bp.route("/new_game")
+def new_game():
+    game_id = game.create(10)
+    return redirect(url_for("play.play", game_id=game_id))
+
+
+@bp.route("/play", methods=["GET", "POST"])
+def play():
+    game_id = request.args.get("game_id")
+    if game_id and not game.load_game(game_id):
+        return new_game()
+
+    pokemon = game.load_pokemon()
+    name = pokemon["name"].upper()
+
+    if request.method == "POST" and request.is_json:
+        value = request.json.get("value")
+        current_app.logger.debug(f"value = {value}")
+
+        if not value in name:
+            session["life"] -= 1
+            session["streak"] = 0
+
+        session["guess"] += value
+        game.save_game(game_id)
+
+        return (
+            json.dumps(
+                {
+                    "current_word": game.get_current_word(name),
+                    "life": session["life"],
+                    "streak": session["streak"],
+                }
+            ),
+            200,
+            {"ContentType": "application/json"},
+        )
+
+    if request.method == "POST" and request.form:
+        current_app.logger.debug(f"request.form = {request.form}")
+        player = request.form.get("player-name")
+
+        if 3 <= len(player) <= 10:
+            session["player"] = player
+            game.save_game(game_id)
+            return redirect(url_for("play.hi_scores"))
+
+    image = pokemon["original"]
+    header = "It's {}!".format(name)
+
+    current_word = game.get_current_word(name)
+    if "_" in current_word and session["life"]:
+        image = pokemon["silhouette"]
+        header = "Who's That Pokémon?"
+    else:
+        current_app.logger.debug(f"session['life'] = { session['life']}")
+        if session["life"]:
+            game.load_next_pokemon()
+            # return redirect(url_for("play.play", game_id=game_id))
+        game.save_game(game_id)
+
+    return render_template(
+        "pages/play.html",
+        current_word=current_word,
+        life=session["life"],
+        header=header,
+        hi_score=session["hi_score"],
+        pokemon=image,
+        score=session["score"],
+        streak=session["streak"],
     )

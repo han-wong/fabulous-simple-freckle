@@ -1,3 +1,4 @@
+import os
 import string
 import random
 import json
@@ -11,28 +12,34 @@ import requests
 
 from pokemon.database import get_db
 
+EXCLUDE_IN_GUESS = "2'. -"
 cache = {}
 
 
 def create(length_of_id):
-    game_id = "".join(
-        random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits)
-        for _ in range(length_of_id)
-    )
-    guess = reset_guess("")
-    life = reset_life(7)
-    pokemon_id = reset_pokemon(0)
-    score = reset_score(0)
-    streak = reset_streak(0)
-    print(f"pokemon_id = {pokemon_id}")
-    if pokemon_id:
+    session["game_id"] = os.urandom(length_of_id).hex()
+    session["guess"] = ""
+    load_hi_score()
+    session["life"] = 7
+    session["player"] = None
+    reset_pokemon(0)
+    session["score"] = 0
+    session["streak"] = 0
+    if session["pokemon_id"]:
         db = get_db()
         db.execute(
             "INSERT INTO game (game_id, guess, life, pokemon_id, score, streak) VALUES (?, ?, ?, ?, ?, ?)",
-            (game_id, guess, life, pokemon_id, score, streak),
+            (
+                session["game_id"],
+                session["guess"],
+                session["life"],
+                session["pokemon_id"],
+                session["score"],
+                session["streak"],
+            ),
         )
         db.commit()
-    return game_id
+    return session["game_id"]
 
 
 def fetch_pokemon(id):
@@ -41,44 +48,56 @@ def fetch_pokemon(id):
     return json.loads(res.content)
 
 
-def get_guess(name):
-    return " ".join(
-        [
-            x
-            if x in (session.get("guess_exclude") + session.get("guess_player"))
-            else "_"
-            for x in name
-        ]
+def get_current_word(name):
+    current_word = " ".join(
+        [x if x in (EXCLUDE_IN_GUESS + session["guess"]) else "_" for x in name]
     )
+    current_app.logger.debug(f"current_word = {current_word}")
+    return current_word
+
+
+def get_games_by_score():
+    db = get_db()
+    sql = """SELECT player, score FROM game WHERE player IS NOT NULL AND score !=0 ORDER BY score DESC;"""
+    return db.execute(sql).fetchall()
+
+
+def load_hi_score():
+    db = get_db()
+    (score,) = db.execute("SELECT max(score) FROM game;").fetchone()
+    session["hi_score"] = score if score else 0
 
 
 def load_game(_id):
     db = get_db()
     game = db.execute(
-        "SELECT guess, life, pokemon_id, score, streak FROM game WHERE game_id=?",
+        "SELECT * FROM game WHERE game_id = ? AND player IS NULL",
         (_id,),
     ).fetchone()
+    current_app.logger.debug(f"load_game, session = {session}")
     if game:
-        reset_guess(game["guess"])
-        reset_life(game["life"])
+        session["guess"] = game["guess"]
+        session["life"] = game["life"]
+        session["player"] = game["player"]
         reset_pokemon(game["pokemon_id"])
-        reset_score(game["score"])
-        reset_streak(game["streak"])
+        session["score"] = game["score"]
+        session["streak"] = game["streak"]
+        load_hi_score()
         return True
     return False
 
 
 def load_next_pokemon():
-    del session["pokemon"]
-    reset_guess("")
-    reset_life(7)
+    session["guess"] = ""
+    session["life"] = 7
     reset_pokemon(0)
     session["score"] += 100 + session["streak"] * 10
     session["streak"] += 1
+    current_app.logger.debug(f"load_next_pokemon, session = {session}")
 
 
 def load_pokemon():
-    _id = session.get("pokemon").get("id")
+    _id = session["pokemon_id"]
     print(f"_id = {_id}")
     # 787 TAPU BULU
     if not _id in cache:
@@ -87,32 +106,11 @@ def load_pokemon():
     return cache[_id]
 
 
-def reset_guess(guess):
-    session["guess_exclude"] = "2'. -"
-    session["guess_player"] = guess
-    return guess
-
-
-def reset_life(life):
-    session["life"] = life
-    return life
-
-
 def reset_pokemon(_id):
     if not _id:
         _id = random.choice(range(899))
-    session["pokemon"] = {"id": _id}
+    session["pokemon_id"] = _id
     return _id
-
-
-def reset_score(score):
-    session["score"] = score
-    return score
-
-
-def reset_streak(streak):
-    session["streak"] = streak
-    return streak
 
 
 def save_game(game_id):
@@ -120,6 +118,7 @@ def save_game(game_id):
     sql = """ UPDATE game 
             SET guess = ?,
                 life = ?, 
+                player = ?,
                 pokemon_id = ?,
                 score = ?,
                 streak = ?
@@ -127,9 +126,10 @@ def save_game(game_id):
     db.execute(
         sql,
         (
-            session["guess_player"],
+            session["guess"],
             session["life"],
-            session["pokemon"]["id"],
+            session["player"],
+            session["pokemon_id"],
             session["score"],
             session["streak"],
             game_id,
