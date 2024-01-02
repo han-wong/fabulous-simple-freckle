@@ -33,7 +33,7 @@
       </div>
     </div>
     <h3>{{ header }}</h3>
-    {% if life %}
+    {% if life and "_" in current_word %}
     <h2 id="current-word">{{ current_word }}</h2>
       <div class="col-12 keyboard-buttons">
         <input class="keyboard-button" id="btnA" type="button" value="A" onclick="input(this);" />
@@ -63,7 +63,7 @@
         <input class="keyboard-button" id="btnY" type="button" value="Y" onclick="input(this);" />
         <input class="keyboard-button" id="btnZ" type="button" value="Z" onclick="input(this);" />
       </div>
-    {% else %}
+    {% elif not life %}
       <div class="col-12 game-over">
         <h3>GAME OVER</h3>
         <form method="post">

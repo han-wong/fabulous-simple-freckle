@@ -18,7 +18,6 @@ function input() {
 async function handleInput(value) {
     if (waiting) return
     waiting = true
-    console.log(value)
     disableInput(value)
     const response = await fetch('/play' + window.location.search, {
         method: 'POST',
@@ -41,9 +40,9 @@ async function handleInput(value) {
 }
 
 function start() {
-    if (!gameIsOngoing()) {
+    if (!gameIsOngoing() && !gameIsOver()) {
         setTimeout(() => {
-            location.reload()
+            // location.reload()
         }, 2000);
     }
     renderLife(document.getElementById('life').textContent)
@@ -51,11 +50,12 @@ function start() {
 }
 
 function gameIsOngoing() {
-    return document.getElementById('current-word').textContent.includes('_')
+    return document.getElementById('current-word')?.textContent.includes('_')
 }
 
 function gameIsOver() {
-    return !!!document.getElementById('life').textContent
+    const life = document.getElementById('life').textContent
+    return life === "0" || !life
 }
 
 async function loadGuesses() {
@@ -66,13 +66,12 @@ async function loadGuesses() {
         loadKeyboard()
     }
     if (gameIsOver()) {
-        console.log("GAME OVER")
         location.reload()
     }
 }
 
 function loadKeyboard() {
-    document.querySelectorAll('.keyboard-button').forEach((el) => (el.style.display = 'flex'));
+    // document.querySelectorAll('.keyboard-button').forEach((el) => (el.style.display = 'flex'));
     document.addEventListener(
         'keyup',
         ({ key }) => {

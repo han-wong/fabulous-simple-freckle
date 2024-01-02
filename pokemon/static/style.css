@@ -9,7 +9,7 @@ body {
   background-image: url('bg.png');
   background-size: cover;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 16px;
+  font-size: 14px;
   max-width: 460px;
   margin: auto;
   padding: 10px;
@@ -24,9 +24,8 @@ input {
 }
 
 input[type=button] {
-  display: none;
-  height: 2.5em;
-  width: 2.5em;
+  height: 3em;
+  width: 3em;
 }
 
 input[type=submit] {
@@ -94,11 +93,27 @@ p {
   width: 100%;
 }
 
+.keyboard-button {
+  display: flex;
+  font-weight: 600;
+  justify-content: center;
+}
+
 .keyboard-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 5px;
   justify-content: center;
+}
+
+.overlay {
+  background-color: rgba(120, 120, 120, .25);
+  left: 0;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: -1;
 }
 
 #current-word {
@@ -145,6 +160,13 @@ p {
 /* For mobile phones: */
 [class*="col-"] {
   width: 100%;
+}
+
+@media only screen and (min-width: 460px) {
+
+  .keyboard-buttons {
+    gap: 10px;
+  }
 }
 
 @media only screen and (min-width: 768px) {
