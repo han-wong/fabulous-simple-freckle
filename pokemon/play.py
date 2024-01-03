@@ -80,7 +80,7 @@ def play():
         current_app.logger.debug(f"request.form = {request.form}")
         player = request.form.get("player-name")
 
-        if 3 <= len(player) <= 10:
+        if not session["player"] and 3 <= len(player) <= 10:
             session["player"] = player
             game.save_game(game_id)
             return redirect(url_for("play.hi_scores"))

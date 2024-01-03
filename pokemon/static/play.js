@@ -47,8 +47,7 @@ function start() {
     }
     renderLife(document.getElementById('life').textContent)
     loadGuesses()
-    var scrollBottom = window.scrollTo(0, document.body.scrollHeight);
-    console.log(scrollBottom)
+    document.documentElement.scroll({top:document.body.scrollHeight}) 
 }
 
 function gameIsOngoing() {
