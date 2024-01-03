@@ -1,30 +1,30 @@
 {% extends 'base.html' %}
 {% block header %}
-  <h2>
+  <h3>
     {% block title %}
       Play
     {% endblock %}
-  </h2>
+  </h3>
 {% endblock %}
 
 {% block content %}
   <div id="main" class="flex-col col-12">
     <div class="flex-row col-12" id="score-board">
       <div>
-        <h3>Life</h3>
-        <h3 id="life">{{ life }}</h3>
+        <h4>Life</h4>
+        <h4 id="life">{{ life }}</h4>
       </div>
       <div>
-        <h3>Streak</h3>
-        <h3 id="streak">{{ streak }}</h3>
+        <h4>Streak</h4>
+        <h4 id="streak">{{ streak }}</h4>
       </div>
       <div>
-        <h3>Score</h3>
-        <h3 id="score">{{ score }}</h3>
+        <h4>Score</h4>
+        <h4 id="score">{{ score }}</h4>
       </div>
       <div>
-        <h3>Hi-Score</h3>
-        <h3 id="hi-score">{{ hi_score }}</h3>
+        <h4>Hi-Score</h4>
+        <h4 id="hi-score">{{ hi_score }}</h4>
       </div>
     </div>
     <div class="col-12" id="pokemon-container">
@@ -32,7 +32,7 @@
         <img src="data:image/png;base64,{{ pokemon }}" />
       </div>
     </div>
-    <h3>{{ header }}</h3>
+    <h4>{{ header }}</h4>
     {% if life and "_" in current_word %}
     <h2 id="current-word">{{ current_word }}</h2>
       <div class="col-12 keyboard-buttons">
