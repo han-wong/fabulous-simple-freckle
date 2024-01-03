@@ -42,7 +42,7 @@ async function handleInput(value) {
 function start() {
     if (!gameIsOngoing() && !gameIsOver()) {
         setTimeout(() => {
-            // location.reload()
+            location.reload()
         }, 2000);
     }
     renderLife(document.getElementById('life').textContent)
