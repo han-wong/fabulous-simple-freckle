@@ -1,13 +1,19 @@
-<nav>
-  <ul>
-    <li>
-      <a href="{{ url_for('pages.home') }}">Home</a>
-    </li>
-    <li>
-      <a href="{{ url_for('play.new_game') }}">New game</a>
-    </li>
-    <li>
-      <a href="{{ url_for('play.hi_scores') }}">Hi-Scores</a>
-    </li>
-  </ul>
+<nav class="navbar is-danger">
+  <div class="container">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="{{ url_for('pages.home') }}"><span style="width: 200px">Pokemon Hangman</span></a>
+      <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div id="navMenu" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="{{ url_for('pages.home') }}">Home</a>
+        <a class="navbar-item" href="{{ url_for('play.new_game') }}">New game</a>
+        <a class="navbar-item" href="{{ url_for('play.hi_scores') }}">Hi-Scores</a>
+      </div>
+    </div>
+  </div>
 </nav>

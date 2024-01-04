@@ -32,10 +32,7 @@ def hi_scores():
     games = game.get_games_by_score()
     for x in games:
         current_app.logger.debug(f"games = {dict(x)}")
-    return render_template(
-        "pages/hi-scores.html",
-        games=games
-    )
+    return render_template("pages/hi-scores.html", games=games)
 
 
 @bp.route("/new_game")
@@ -101,6 +98,7 @@ def play():
 
     return render_template(
         "pages/play.html",
+        alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
         current_word=current_word,
         life=session["life"],
         header=header,

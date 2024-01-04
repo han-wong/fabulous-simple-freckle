@@ -1,32 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>
       Pokemon Hangman -{% block title %}
 
       {% endblock %}
     </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/solid.min.css" integrity="sha512-pZlKGs7nEqF4zoG0egeK167l6yovsuL8ap30d07kA5AJUq+WysFlQ02DLXAmN3n0+H3JVz5ni8SJZnrOaYXWBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css" integrity="sha512-d0olNN35C6VLiulAobxYHZiXJmq+vl+BGIgAxQtD5+kqudro/xNMvv2yIHAciGHpExsIbKX3iLg+0B6d0k4+ZA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}" />
   </head>
   <body>
-    <div class="overlay"></div>
-    <h1>Pokemon Hangman</h1>
     {% include '_navigation.html' %}
-    <section>
-      <header class="flex-row">
-        {% block header %}
+    <section class="hero is-danger is-fullheight-with-navbar">
+      <div class="hero-body is-flex-direction-column mb-4 p-4">
+        {% block content %}
 
         {% endblock %}
-        {% for category, message in get_flashed_messages(with_categories = true) %}
-          <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-      </header>
-      <main>
-        {% block content %}
-          <p>No messages.</p>
-        {% endblock %}
-      </main>
+      </div>
     </section>
+    <script src="static/base.js" defer></script>
   </body>
 </html>

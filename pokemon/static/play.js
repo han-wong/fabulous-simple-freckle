@@ -5,7 +5,6 @@ function disableInput(key) {
     disabledKeys += key
     const input = document.getElementById('btn' + key)
     input.disabled = true
-    input.value = ''
 }
 
 function input() {
@@ -47,7 +46,7 @@ function start() {
     }
     renderLife(document.getElementById('life').textContent)
     loadGuesses()
-    document.documentElement.scroll({top:document.body.scrollHeight}) 
+    document.documentElement.scroll({ top: document.body.scrollHeight })
 }
 
 function gameIsOngoing() {
@@ -100,3 +99,7 @@ function renderStreak(streak) {
 if (!gameIsOver()) {
     start()
 }
+
+window.addEventListener("load", (event) => {
+    document.querySelector(".animation-start").className = "animation-grow"
+});

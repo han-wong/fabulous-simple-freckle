@@ -1,83 +1,68 @@
 {% extends 'base.html' %}
 {% block header %}
-  <h3>
-    {% block title %}
-      Play
-    {% endblock %}
-  </h3>
+  {% block title %}
+
+  {% endblock %}
 {% endblock %}
 
 {% block content %}
-  <div id="main" class="flex-col col-12">
-    <div class="flex-row col-12" id="score-board">
+  <div class="columns has-text-centered is-mobile" id="score-board">
+    <div class="column">
       <div>
-        <h4>Life</h4>
-        <h4 id="life">{{ life }}</h4>
-      </div>
-      <div>
-        <h4>Streak</h4>
-        <h4 id="streak">{{ streak }}</h4>
-      </div>
-      <div>
-        <h4>Score</h4>
-        <h4 id="score">{{ score }}</h4>
-      </div>
-      <div>
-        <h4>Hi-Score</h4>
-        <h4 id="hi-score">{{ hi_score }}</h4>
+        <p class="heading">Life</p>
+        <p class="subtitle is-5" id="life">{{ life }}</p>
       </div>
     </div>
-    <div class="col-12" id="pokemon-container">
-      <div class="image-wrapper">
-        <img src="data:image/png;base64,{{ pokemon }}" />
+    <div class="column is-narrow-mobile">
+      <div>
+        <p class="heading">Streak</p>
+        <p class="subtitle is-5" id="streak">{{ streak }}</p>
       </div>
     </div>
-    <h4>{{ header }}</h4>
-    {% if life and "_" in current_word %}
-    <h2 id="current-word">{{ current_word }}</h2>
-      <div class="col-12 keyboard-buttons">
-        <input class="keyboard-button" id="btnA" type="button" value="A" onclick="input(this);" />
-        <input class="keyboard-button" id="btnB" type="button" value="B" onclick="input(this);" />
-        <input class="keyboard-button" id="btnC" type="button" value="C" onclick="input(this);" />
-        <input class="keyboard-button" id="btnD" type="button" value="D" onclick="input(this);" />
-        <input class="keyboard-button" id="btnE" type="button" value="E" onclick="input(this);" />
-        <input class="keyboard-button" id="btnF" type="button" value="F" onclick="input(this);" />
-        <input class="keyboard-button" id="btnG" type="button" value="G" onclick="input(this);" />
-        <input class="keyboard-button" id="btnH" type="button" value="H" onclick="input(this);" />
-        <input class="keyboard-button" id="btnI" type="button" value="I" onclick="input(this);" />
-        <input class="keyboard-button" id="btnJ" type="button" value="J" onclick="input(this);" />
-        <input class="keyboard-button" id="btnK" type="button" value="K" onclick="input(this);" />
-        <input class="keyboard-button" id="btnL" type="button" value="L" onclick="input(this);" />
-        <input class="keyboard-button" id="btnM" type="button" value="M" onclick="input(this);" />
-        <input class="keyboard-button" id="btnN" type="button" value="N" onclick="input(this);" />
-        <input class="keyboard-button" id="btnO" type="button" value="O" onclick="input(this);" />
-        <input class="keyboard-button" id="btnP" type="button" value="P" onclick="input(this);" />
-        <input class="keyboard-button" id="btnQ" type="button" value="Q" onclick="input(this);" />
-        <input class="keyboard-button" id="btnR" type="button" value="R" onclick="input(this);" />
-        <input class="keyboard-button" id="btnS" type="button" value="S" onclick="input(this);" />
-        <input class="keyboard-button" id="btnT" type="button" value="T" onclick="input(this);" />
-        <input class="keyboard-button" id="btnU" type="button" value="U" onclick="input(this);" />
-        <input class="keyboard-button" id="btnV" type="button" value="V" onclick="input(this);" />
-        <input class="keyboard-button" id="btnW" type="button" value="W" onclick="input(this);" />
-        <input class="keyboard-button" id="btnX" type="button" value="X" onclick="input(this);" />
-        <input class="keyboard-button" id="btnY" type="button" value="Y" onclick="input(this);" />
-        <input class="keyboard-button" id="btnZ" type="button" value="Z" onclick="input(this);" />
+    <div class="column is-narrow-mobile">
+      <div>
+        <p class="heading">Score</p>
+        <p class="subtitle is-5" id="score">{{ score }}</p>
+      </div>
+    </div>
+    <div class="column is-narrow-mobile">
+      <div>
+        <p class="heading">Hi-Score</p>
+        <p class="subtitle is-5" id="hi-score">{{ hi_score }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content" id="pokemon-container">
+    <div class="animation-start">
+      <img src="data:image/png;base64,{{ pokemon }}" />
+    </div>
+  </div>
+
+  <div class="columns has-text-centered" id="main">
+    <p class="title is-4">{{ header }}</p>
+    {% if life and '_' in current_word %}
+      <p class="subtitle is-3" id="current-word">{{ current_word }}</p>
+      <div class="buttons are-normal is-justify-content-center">
+        {% for c in alphabet %}
+          <button class="button" id="{{ 'btn' + c }}" onclick="input(this);" value="{{ c }}"><span class="icon"><i class="{{ 'fa-solid fa-' + c.lower() }}"></i></span></button>
+        {% endfor %}
       </div>
     {% elif not life %}
-      <div class="col-12 game-over">
-        <h3>GAME OVER</h3>
+      <p class="subtitle is-3">GAME OVER</p>
+      <div class="box has-text-left">
         <form method="post">
-          <fieldset>
-            <legend>Name</legend>
-            <p>
-              {# comment <label for="player-name">Name</label> #}
-              {# endcomment #}
-              <input id="player-name" type="text" name="player-name" placeholder="Enter your name" />
-            </p>
-            <p>
-              <input type="submit" value="Submit" />
-            </p>
-          </fieldset>
+          <div class="field">
+            <label class="label" for="player-name">Name</label>
+            <div class="control">
+              <input class="input" id="player-name" name="player-name" placeholder="Enter your name" type="text" />
+            </div>
+          </div>
+          <div class="field">
+            <div class="control">
+              <input class="button is-info" type="submit" value="Submit" />
+            </div>
+          </div>
         </form>
       </div>
     {% endif %}
