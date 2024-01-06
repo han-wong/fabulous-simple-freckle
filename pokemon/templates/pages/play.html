@@ -57,7 +57,7 @@
             <button class="button m-0" id="{{ 'btn' + c }}" onclick="input(this);" value="{{ c }}"><span class="icon"><i class="{{ 'fa-solid fa-' + c.lower() }}"></i></span></button>
           {% endfor %}
         </div>
-      {% elif not life %}
+      {% elif not life and score %}
         <div class="box has-text-left">
           <form method="post">
             <div class="field">
