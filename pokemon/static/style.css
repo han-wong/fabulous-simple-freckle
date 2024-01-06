@@ -23,6 +23,10 @@
   gap: 5px;
 }
 
+.hero-body {
+  max-height: 700px;
+}
+
 .hi-score {
   white-space: nowrap;
 }
@@ -30,7 +34,6 @@
 #current-word {
   white-space: pre;
 }
-
 
 #pokemon-container {
   background-image: url('wow_1.png');
