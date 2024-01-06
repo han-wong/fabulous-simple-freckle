@@ -9,25 +9,25 @@
   <div class="container level has-text-centered is-fluid is-mobile p-0" id="score-board">
     <div class="level-item">
       <div class="heading">
-        <p class="heading">Life</p>
-        <p class="subtitle is-5" id="life">{{ life }}</p>
+        <p>Life</p>
+        <p class="is-size-5" id="life">{{ life }}</p>
       </div>
     </div>
     <div class="level-item">
       <div class="heading">
-        <p class="heading is-5">Streak</p>
-        <p class="subtitle is-5" id="streak">{{ streak }}</p>
+        <p>Streak</p>
+        <p class="is-size-5" id="streak">{{ streak }}</p>
       </div>
     </div>
     <div class="level-item">
       <div class="heading">
-        <p class="heading">Score</p>
-        <p class="subtitle is-5" id="score">{{ score }}</p>
+        <p>Score</p>
+        <p class="is-size-5" id="score">{{ score }}</p>
       </div>
     </div>
     <div class="level-item">
       <div class="heading">
-        <p class="heading">Hi-Score</p>
+        <p>Hi-Score</p>
         <p class="subtitle is-5" id="hi-score">{{ hi_score }}</p>
       </div>
     </div>
@@ -50,7 +50,6 @@
         <p class="subtitle is-3">GAME OVER</p>
       {% endif %}
     </div>
-
     <div class="column is-full">
       {% if life and '_' in current_word %}
         <div class="buttons are-normal is-justify-content-center">
