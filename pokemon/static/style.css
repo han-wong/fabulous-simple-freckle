@@ -6,22 +6,7 @@
   background-size: cover;
 }
 
-.dark {
-  background-color: dimgray;
-  color: white;
-}
-
-.flex-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.flex-row {
-  display: flex;
-  flex-direction: row;
-}
-
-.container {
+.hero>.container {
   max-width: 460px;
 }
 
@@ -34,28 +19,18 @@
   margin: 50px;
 }
 
-.hi-score {
-  white-space: nowrap;
+.buttons {
+  gap: 5px;
 }
 
-.overlay {
-  background-color: rgba(120, 120, 120, .25);
-  left: 0;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: -1;
+.hi-score {
+  white-space: nowrap;
 }
 
 #current-word {
   white-space: pre;
 }
 
-#main {
-  align-items: center;
-  gap: 10px;
-}
 
 #pokemon-container {
   background-image: url('wow_1.png');
