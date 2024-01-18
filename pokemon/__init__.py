@@ -1,20 +1,23 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask
-
-load_dotenv()
-
+from flask_restful import Api
 from pokemon import (
+    api,
     database,
     errors,
     git,
     play,
     pages,
 )
+from pokemon.api import Game
+
+load_dotenv()
 
 
 def create_app():
     app = Flask(__name__)
+
     app.config.from_prefixed_env()
     app.logger.setLevel(
         "DEBUG" if os.getenv("ENVIRONMENT") == "Development" else "INFO"
@@ -28,6 +31,9 @@ def create_app():
     app.config.update(POKEMON=os.getenv("POKEMON"))
     app.logger.debug(f"Current Environment: {os.getenv('ENVIRONMENT')}")
     app.logger.debug(f"Using Database: {app.config.get('DATABASE')}")
+
+    api = Api(app)
+    api.add_resource(Game, '/game', endpoint = 'game')
     return app
 
 

@@ -1,52 +1,11 @@
-let disabledKeys = ''
-let waiting = false
+window.addEventListener("load", (event) => {
+    document.querySelector(".animation-start").className = "animation-grow"
+});
 
 function disableInput(key) {
     disabledKeys += key
     const input = document.getElementById('btn' + key)
     input.disabled = true
-}
-
-function input() {
-    const [{ value }] = arguments
-    if (value && !gameIsOver()) {
-        handleInput(value)
-    }
-}
-
-async function handleInput(value) {
-    if (waiting) return
-    waiting = true
-    disableInput(value)
-    const response = await fetch('/play' + window.location.search, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        redirect: 'follow',
-        body: JSON.stringify({ value })
-    })
-    const { current_word, life, streak } = await response.json()
-    if (life) {
-        document.getElementById('current-word').textContent = current_word
-        if (!current_word.includes('_')) {
-            location.reload()
-        }
-        renderLife(life)
-        renderStreak(streak)
-        waiting = false
-    } else {
-        location.reload()
-    }
-}
-
-function start() {
-    if (!gameIsOngoing() && !gameIsOver()) {
-        setTimeout(() => {
-            location.reload()
-        }, 2000);
-    }
-    renderLife(document.getElementById('life').textContent)
-    loadGuesses()
-    document.documentElement.scroll({ top: document.body.scrollHeight })
 }
 
 function gameIsOngoing() {
@@ -58,8 +17,42 @@ function gameIsOver() {
     return life === "0" || !life
 }
 
+async function handleInput(value) {
+    if (waiting) return
+    waiting = true
+    disableInput(value)
+    const response = await fetch('/game' + window.location.search, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ "guess": value })
+    })
+    const { current_word, life, streak } = await response.json();
+    if (life) {
+        document.getElementById('current-word').textContent = current_word;
+        if (!current_word.includes('_')) {
+            location.reload();
+        }
+        let message = document.getElementById('message');
+        if (message && current_word.split(" ").filter((a) => a != "_").length) {
+            message.classList.add("is-hidden")
+        }
+        renderLife(life);
+        renderStreak(streak);
+        waiting = false
+    } else {
+        location.reload()
+    }
+}
+
+function input() {
+    const [{ value }] = arguments
+    if (value && !gameIsOver()) {
+        handleInput(value)
+    }
+}
+
 async function loadGuesses() {
-    const response = await fetch('/guess', { method: 'GET' })
+    const response = await fetch('/game' + window.location.search, { method: 'GET', })
     const { guess } = await response.json()
     Array(...guess).forEach((c) => disableInput(c))
     if (gameIsOngoing()) {
@@ -71,7 +64,6 @@ async function loadGuesses() {
 }
 
 function loadKeyboard() {
-    // document.querySelectorAll('.keyboard-button').forEach((el) => (el.style.display = 'flex'));
     document.addEventListener(
         'keyup',
         ({ key }) => {
@@ -96,10 +88,21 @@ function renderStreak(streak) {
     document.getElementById('streak').textContent = streak, 10
 }
 
+function start() {
+    if (!gameIsOngoing() && !gameIsOver()) {
+        setTimeout(() => {
+            location.reload()
+        }, 3000);
+    }
+    renderLife(document.getElementById('life').textContent)
+    loadGuesses()
+    document.documentElement.scroll({ top: document.body.scrollHeight })
+}
+
+const allowedCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let disabledKeys = ''
+let waiting = false
+
 if (!gameIsOver()) {
     start()
 }
-
-window.addEventListener("load", (event) => {
-    document.querySelector(".animation-start").className = "animation-grow"
-});

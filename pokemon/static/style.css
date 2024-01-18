@@ -1,5 +1,5 @@
 .animation-start {
-  margin: 150px;
+  margin: 200px;
 }
 
 .animation-grow {
@@ -24,7 +24,6 @@
 }
 
 .hero>.container {
-  width: 460px;
   max-width: 460px;
 }
 
@@ -38,12 +37,17 @@
 
 #pokemon-container {
   background-image: url('wow_1.png');
+  background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 300px;
-  max-width: 300px;
-  max-height: 300px;
+  height: 350px;
+  max-width: 350px;
+  max-height: 350px;
   width: 100%;
+}
+
+#main {
+  min-width: 100%;
 }
 
 #title {
@@ -53,7 +57,7 @@
 
 @keyframes pokemon {
   from {
-    margin: 140px;
+    margin: 200px;
     ;
   }
 

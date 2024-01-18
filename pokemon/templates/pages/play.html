@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container has-text-centered is-fluid is-mobile level p-0" id="score-board">
+  <div class="container has-text-centered is-fluid is-mobile level mb-0 p-0" id="score-board">
     <div class="level-item">
       <div class="heading">
         <p>Life</p>
@@ -40,9 +40,11 @@
   </div>
 
   <div class="container columns has-text-centered is-mobile is-multiline" id="main">
-    <div class="column is-full">
-      <p class="title is-4">{{ header }}</p>
+    {% if not life or not guess or '_' not in current_word %}
+    <div class="column is-full" id="message">
+      <p class="title is-4">{{ message }}</p>
     </div>
+    {% endif %}
     <div class="column is-full">
       {% if life and '_' in current_word %}
         <p class="subtitle is-3" id="current-word">{{ current_word }}</p>
@@ -57,7 +59,7 @@
             <button class="button m-0" id="{{ 'btn' + c }}" onclick="input(this);" value="{{ c }}"><span class="icon"><i class="{{ 'fa-solid fa-' + c.lower() }}"></i></span></button>
           {% endfor %}
         </div>
-      {% elif not life and score %}
+      {% elif not life and not player %}
         <div class="box has-text-left">
           <form method="post">
             <div class="field">

@@ -1,6 +1,7 @@
-# pip3 install --upgrade pip --no-cache-dir
+# python3 -m pip install --upgrade pip --no-cache-dir 
 # pip3 install -r requirements.txt --no-cache-dir
-Flask==2.2.5
+# Flask==2.2.5
+flask-restful==0.3.10
 gunicorn==21.2.0
 python-dotenv==0.21.1
 requests==2.26.0
