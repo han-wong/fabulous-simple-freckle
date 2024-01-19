@@ -28,13 +28,12 @@ class Game(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('game_id', location="args", type=str)
-        self.reqparse.add_argument('guess', location='json', type=str)
-        self.reqparse.add_argument('name', location='json', type=min_length(3))
+        
         super(Game, self).__init__()
 
     @marshal_with(game_fields)
     def get(self):
-        game_id = self.get_required_args("game_id")
+        game_id = self.reqparse.parse_args()["game_id"]
         game = get_game(game_id)
 
         if game:
@@ -48,16 +47,13 @@ class Game(Resource):
 
     @marshal_with(game_fields)
     def post(self):
-        args = request.args
-        current_app.logger.debug(f"post, args = {args}")
-
         game_id = create_game()
         game = get_game(game_id)
         return game, 201
 
     @marshal_with(game_fields)
     def put(self):
-        game_id = self.get_required_args("game_id")
+        game_id = self.reqparse.parse_args()["game_id"]
         game = get_game(game_id)
 
         if not game:
@@ -66,11 +62,13 @@ class Game(Resource):
             if game["player"] and len(game["player"]) >= 3:
                 raise abort(400, 'Game is over!')
             else:
-                game["player"] = self.get_required_args("name")
+                self.reqparse.add_argument('name', location='json', type=min_length(3))
+                game["player"] = self.reqparse.parse_args()["name"]
                 save_game(game)
-            raise abort(400, 'Game is over!')
+                return game, 201
 
-        guess = self.get_required_args("guess").upper()
+        self.reqparse.add_argument('guess', location='json', type=str)
+        guess = self.reqparse.parse_args()["guess"].upper()
         if len(guess) != 1:
             raise abort(400, 'Invalid guess. Enter a single letter!')
         if guess in game["guess"]:
@@ -78,7 +76,3 @@ class Game(Resource):
 
         game = handle_guess(game, guess)
         return game, 201
-
-    def get_required_args(self, field):
-        self.reqparse.replace_argument(field, required=True)
-        return self.reqparse.parse_args()[field]

@@ -31,7 +31,7 @@ def fetch_pokemon(id):
 
 def handle_guess(game, guess):
     guess = guess.upper()
-    if game["life"] > 0:
+    if game["life"] > 0 and "_" in game["current_word"]:
         pokemon = get_pokemon(game["pokemon_id"])
         name = pokemon["name"]
 

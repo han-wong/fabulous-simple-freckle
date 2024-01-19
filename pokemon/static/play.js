@@ -52,7 +52,7 @@ function input() {
 }
 
 async function loadGuesses() {
-    const response = await fetch('/game' + window.location.search, { method: 'GET', })
+    const response = await fetch('/game' + window.location.search)
     const { guess } = await response.json()
     Array(...guess).forEach((c) => disableInput(c))
     if (gameIsOngoing()) {
