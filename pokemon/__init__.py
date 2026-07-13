@@ -1,4 +1,3 @@
-import os
 from dotenv import load_dotenv
 from flask import Flask
 from flask_restful import Api
@@ -28,7 +27,6 @@ def create_app():
     app.register_blueprint(pages.bp)
     app.register_blueprint(play.bp)
     app.register_error_handler(404, errors.page_not_found)
-    app.config.update(POKEMON=os.getenv("FLASK_POKEMON"))
     app.logger.debug(f"Current Environment: {app.config.get('ENVIRONMENT')}")
     app.logger.debug(f"Using Database: {app.config.get('DATABASE')}")
 
