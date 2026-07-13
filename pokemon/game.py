@@ -1,4 +1,3 @@
-import json
 import os
 import random
 import requests
@@ -25,8 +24,10 @@ def create_game():
 
 def fetch_pokemon(id):
     url = current_app.config["POKEMON"] + str(id)
+    current_app.logger.debug(f"fetch_pokemon, url = {url}")
     res = requests.get(url)
-    return json.loads(res.content)
+    res.raise_for_status()
+    return res.json()
 
 
 def handle_guess(game, guess):
