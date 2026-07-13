@@ -72,7 +72,12 @@ function loadKeyboard() {
             if (allowedCharacters.includes(key) && !disabledKeys.includes(key)) {
                 handleInput(key)
             } else if (key === 'ENTER') {
-                location.reload()
+                const form = document.querySelector('form')
+                if (form) {
+                    form.submit()
+                } else {
+                    location.reload()
+                }
             }
         },
         false

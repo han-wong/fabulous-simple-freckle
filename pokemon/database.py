@@ -19,8 +19,16 @@ def _init_db():
     with current_app.open_resource("schema.sql") as f:
         db.executescript(f.read().decode("utf-8"))
 
+DEFAULT_HI_SCORES = [
+    ("Han",     850),
+    ("Ash",     720),
+    ("Misty",   610),
+    ("Brock",   540),
+    ("Gary",    430),
+]
+
 def _ensure_db():
-    """Create tables if they don't exist yet. Safe to call on every startup."""
+    """Create tables if they don't exist yet and seed default hi-scores. Safe to call on every startup."""
     db = get_db()
     db.execute(
         """CREATE TABLE IF NOT EXISTS game (
@@ -36,6 +44,19 @@ def _ensure_db():
         )"""
     )
     db.commit()
+    _seed_default_scores(db)
+
+def _seed_default_scores(db):
+    """Insert default hi-score entries if the table is empty."""
+    (count,) = db.execute("SELECT COUNT(*) FROM game WHERE player IS NOT NULL").fetchone()
+    if count == 0:
+        import os
+        for player, score in DEFAULT_HI_SCORES:
+            db.execute(
+                "INSERT INTO game (game_id, guess, life, player, pokemon_id, score, streak) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (os.urandom(10).hex(), "", 0, player, "1", score, 0),
+            )
+        db.commit()
 
 def get_db():
     if "db" not in g:

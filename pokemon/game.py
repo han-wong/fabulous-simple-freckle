@@ -95,7 +95,7 @@ def get_game_state(game):
 def get_games_by_score():
     db = get_db()
     return db.execute(
-        "SELECT player, score FROM game WHERE player IS NOT NULL AND score !=0 ORDER BY score DESC LIMIT 10"
+        "SELECT player, score FROM game WHERE player IS NOT NULL ORDER BY score DESC LIMIT 10"
     ).fetchall()
 
 
