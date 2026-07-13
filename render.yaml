@@ -5,13 +5,9 @@ services:
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn "pokemon:create_app()" -w 1 --log-file - --bind 0.0.0.0:$PORT
-    disk:
-      name: pokemon-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: FLASK_DATABASE
-        value: /data/pokemon.db
+        value: /opt/render/project/src/pokemon.db
       - key: FLASK_ENVIRONMENT
         value: Production
       - key: FLASK_SECRET_KEY
