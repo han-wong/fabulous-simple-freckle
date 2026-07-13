@@ -78,6 +78,6 @@
       {% endif %}
     </div>
   </div>
-  <script src="static/play.js" defer></script>
+  <script src="{{ url_for('static', filename='play.js') }}" defer></script>
   <noscript>Sorry, your browser does not support JavaScript!</noscript>
 {% endblock %}

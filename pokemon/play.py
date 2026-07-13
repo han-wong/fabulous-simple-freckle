@@ -35,7 +35,7 @@ def play():
 
     if request.method == "POST" and request.form:
         current_app.logger.debug(f"request.form = {request.form}")
-        player = request.form.get("player-name")
+        player = request.form.get("player-name") or ""
 
         if not game["player"] and 3 <= len(player) <= 10:
             game["player"] = player

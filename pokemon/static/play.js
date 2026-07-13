@@ -85,7 +85,7 @@ function renderLife(life) {
 }
 
 function renderStreak(streak) {
-    document.getElementById('streak').textContent = streak, 10
+    document.getElementById('streak').textContent = parseInt(streak, 10)
 }
 
 function start() {
