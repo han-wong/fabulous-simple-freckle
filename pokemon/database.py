@@ -1,4 +1,6 @@
-import sqlite3
+import os
+import psycopg2
+import psycopg2.extras
 import click
 from flask import current_app, g
 
@@ -11,13 +13,8 @@ def init_app(app):
 
 @click.command("init-db")
 def init_db_command():
-    _init_db()
+    _ensure_db()
     click.echo("You successfully initialized the database!")
-
-def _init_db():
-    db = get_db()
-    with current_app.open_resource("schema.sql") as f:
-        db.executescript(f.read().decode("utf-8"))
 
 DEFAULT_HI_SCORES = [
     ("Han",     850),
@@ -30,46 +27,52 @@ DEFAULT_HI_SCORES = [
 def _ensure_db():
     """Create tables if they don't exist yet and seed default hi-scores. Safe to call on every startup."""
     db = get_db()
-    db.execute(
+    cur = db.cursor()
+    cur.execute(
         """CREATE TABLE IF NOT EXISTS game (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             game_id TEXT NOT NULL,
-            guess TEXT NOT NULL,
-            life INTEGER NOT NULL,
+            guessed_letters TEXT NOT NULL,
+            lives INTEGER NOT NULL,
             player TEXT,
-            pokemon_id TEXT NOT NULL,
+            pokedex_number TEXT NOT NULL,
             score INTEGER NOT NULL,
             streak INTEGER NOT NULL
         )"""
     )
     db.commit()
+    current_app.logger.debug("_ensure_db: table ensured, checking seed data")
     _seed_default_scores(db)
 
 def _seed_default_scores(db):
-    """Insert default hi-score entries if the table is empty."""
-    (count,) = db.execute("SELECT COUNT(*) FROM game WHERE player IS NOT NULL").fetchone()
+    """Insert default hi-score entries only if no real scores exist yet."""
+    cur = db.cursor()
+    cur.execute("SELECT COUNT(*) FROM game WHERE player IS NOT NULL")
+    row = cur.fetchone()
+    count = row["count"]
+    current_app.logger.debug(f"_seed_default_scores: existing named games = {count}")
     if count == 0:
-        import os
         for player, score in DEFAULT_HI_SCORES:
-            db.execute(
-                "INSERT INTO game (game_id, guess, life, player, pokemon_id, score, streak) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            cur.execute(
+                "INSERT INTO game (game_id, guessed_letters, lives, player, pokedex_number, score, streak) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s)",
                 (os.urandom(10).hex(), "", 0, player, "1", score, 0),
             )
         db.commit()
+        current_app.logger.debug("_seed_default_scores: inserted 5 default hi-scores")
+    else:
+        current_app.logger.debug("_seed_default_scores: skipped, real scores already exist")
 
 def get_db():
     if "db" not in g:
-        g.db = sqlite3.connect(
-            current_app.config["DATABASE"],
-            detect_types=sqlite3.PARSE_DECLTYPES,
+        g.db = psycopg2.connect(
+            current_app.config["DATABASE_URL"],
+            cursor_factory=psycopg2.extras.RealDictCursor,
         )
-        g.db.row_factory = sqlite3.Row
-
     return g.db
 
 def close_db(e=None):
     db = g.pop("db", None)
-
     if db is not None:
         db.close()

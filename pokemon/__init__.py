@@ -4,7 +4,6 @@ from flask_restful import Api
 from pokemon import (
     database,
     errors,
-    git,
     play,
     pages,
 )
@@ -23,12 +22,11 @@ def create_app():
     )
     database.init_app(app)
 
-    app.register_blueprint(git.bp)
     app.register_blueprint(pages.bp)
     app.register_blueprint(play.bp)
     app.register_error_handler(404, errors.page_not_found)
     app.logger.debug(f"Current Environment: {app.config.get('ENVIRONMENT')}")
-    app.logger.debug(f"Using Database: {app.config.get('DATABASE')}")
+    app.logger.debug(f"Using Database: {app.config.get('DATABASE_URL')}")
 
     rest_api = Api(app)
     rest_api.add_resource(Game, '/game', endpoint='game')

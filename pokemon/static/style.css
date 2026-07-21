@@ -31,8 +31,12 @@
   white-space: nowrap;
 }
 
-#current-word {
+#masked-name {
   white-space: pre;
+}
+
+#message {
+  min-height: 2.5rem;
 }
 
 #pokemon-container {

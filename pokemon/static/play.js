@@ -9,40 +9,58 @@ function disableInput(key) {
 }
 
 function gameIsOngoing() {
-    return document.getElementById('current-word')?.textContent.includes('_')
+    return document.getElementById('masked-name')?.textContent.includes('_')
 }
 
 function gameIsOver() {
-    const life = document.getElementById('life').textContent
-    return life === "0" || !life
+    const lives = document.getElementById('lives').textContent
+    return lives === "0" || !lives
 }
 
+const BATCH_DELAY_MS = 150
+
 async function handleInput(value) {
-    if (waiting) return
-    waiting = true
     disableInput(value)
+    pendingLetters.push(value)
+    clearTimeout(batchTimer)
+    batchTimer = setTimeout(flushBatch, BATCH_DELAY_MS)
+}
+
+async function flushBatch() {
+    if (waiting || pendingLetters.length === 0) return
+    waiting = true
+    const batch = pendingLetters.join('')
+    pendingLetters = []
+
     const response = await fetch('/game' + window.location.search, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ "guess": value })
+        body: JSON.stringify({ "guessed_letters": batch })
     })
-    const { current_word, life, streak } = await response.json();
-    if (life) {
-        document.getElementById('current-word').textContent = current_word;
-        if (!current_word.includes('_')) {
+    const { masked_name, lives, streak } = await response.json();
+    waiting = false
+
+    if (lives) {
+        document.getElementById('masked-name').textContent = masked_name;
+        if (!masked_name.includes('_')) {
             location.reload();
+            return
         }
-        let message = document.getElementById('message');
-        if (message && current_word.split(" ").filter((a) => a != "_").length) {
-            message.classList.add("is-hidden")
-        }
-        renderLife(life);
+        // let message = document.getElementById('message');
+        // if (message && masked_name.split(" ").filter((a) => a != "_").length) {
+        //     message.classList.add("is-hidden")
+        // }
+        renderLives(lives);
         renderStreak(streak);
-        waiting = false
+        // more letters may have queued up while this request was in flight
+        if (pendingLetters.length > 0) {
+            flushBatch()
+        }
     } else {
         location.reload()
     }
 }
+
 
 function input() {
     const [{ value }] = arguments
@@ -53,8 +71,8 @@ function input() {
 
 async function loadGuesses() {
     const response = await fetch('/game' + window.location.search)
-    const { guess } = await response.json()
-    Array(...guess).forEach((c) => disableInput(c))
+    const { guessed_letters } = await response.json()
+    Array(...guessed_letters).forEach((c) => disableInput(c))
     if (gameIsOngoing()) {
         loadKeyboard()
     }
@@ -84,9 +102,9 @@ function loadKeyboard() {
     );
 }
 
-function renderLife(life) {
-    length = parseInt(life, 10)
-    document.getElementById('life').textContent = Array.from({ length }, (x) => '♥').join('')
+function renderLives(lives) {
+    length = parseInt(lives, 10)
+    document.getElementById('lives').textContent = Array.from({ length }, (x) => '♥').join('')
 }
 
 function renderStreak(streak) {
@@ -99,7 +117,7 @@ function start() {
             location.reload()
         }, 3000);
     }
-    renderLife(document.getElementById('life').textContent)
+    renderLives(document.getElementById('lives').textContent)
     loadGuesses()
     document.documentElement.scroll({ top: document.body.scrollHeight })
 }
@@ -107,6 +125,8 @@ function start() {
 const allowedCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 let disabledKeys = ''
 let waiting = false
+let pendingLetters = []
+let batchTimer = null
 
 if (!gameIsOver()) {
     start()
