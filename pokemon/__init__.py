@@ -7,8 +7,9 @@ from pokemon import (
     play,
     pages,
 )
-from pokemon import api as api_module
-from pokemon.api import Game
+from pokemon import game_api as api_module
+from pokemon.game_api import Game
+from pokemon import auth
 
 load_dotenv()
 
@@ -25,6 +26,7 @@ def create_app():
     app.register_blueprint(pages.bp)
     app.register_blueprint(play.bp)
     app.register_error_handler(404, errors.page_not_found)
+    app.context_processor(auth.inject_current_user)
     app.logger.debug(f"Current Environment: {app.config.get('ENVIRONMENT')}")
     app.logger.debug(f"Using Database: {app.config.get('DATABASE_URL')}")
 

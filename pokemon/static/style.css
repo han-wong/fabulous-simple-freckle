@@ -198,7 +198,11 @@
 }
 /* --- End Pokedex theme --- */
 
-/* For mobile phones: */
+.end-game-btn .icon {
+  margin: 0 2px !important;
+  width: 1em;
+}
+
 [class*="col-"] {
   width: 100%;
 }

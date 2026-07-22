@@ -50,13 +50,31 @@ def _ensure_db():
             guessed_letters TEXT NOT NULL,
             lives INTEGER NOT NULL,
             player TEXT,
+            user_id TEXT,
             pokedex_number TEXT NOT NULL,
             score INTEGER NOT NULL,
             streak INTEGER NOT NULL
         )"""
     )
+    # Add user_id to tables that predate this column
+    cur.execute("ALTER TABLE game ADD COLUMN IF NOT EXISTS user_id TEXT")
+    cur.execute(
+        """CREATE TABLE IF NOT EXISTS app_user (
+            id SERIAL PRIMARY KEY,
+            user_id TEXT NOT NULL UNIQUE,
+            display_name TEXT NOT NULL UNIQUE,
+            created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )"""
+    )
+    cur.execute(
+        """CREATE TABLE IF NOT EXISTS pokemon_stats (
+            pokedex_number TEXT PRIMARY KEY,
+            solved INTEGER NOT NULL DEFAULT 0,
+            failed INTEGER NOT NULL DEFAULT 0
+        )"""
+    )
     db.commit()
-    current_app.logger.debug("_ensure_db: table ensured, checking seed data")
     _seed_default_scores(db)
 
 def _seed_default_scores(db):

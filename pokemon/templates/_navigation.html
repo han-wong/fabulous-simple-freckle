@@ -16,6 +16,12 @@
         <a class="navbar-item" href="{{ url_for('pages.home') }}">Home</a>
         <a class="navbar-item" href="{{ url_for('play.new_game') }}">New game</a>
         <a class="navbar-item" href="{{ url_for('play.hi_scores') }}">Hi-Scores</a>
+        {% if current_user %}
+          <a class="navbar-item" href="{{ url_for('pages.profile') }}">Profile</a>
+          <a class="navbar-item" href="{{ url_for('pages.logout') }}">Log out ({{ current_user['email'] }})</a>
+        {% else %}
+          <a class="navbar-item" href="{{ url_for('pages.auth') }}">Log in / Sign up</a>
+        {% endif %}
       </div>
     </div>
   </div>

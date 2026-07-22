@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block header %}
+  <h2>
+    {% block title %}
+      Log In / Sign Up
+    {% endblock %}
+  </h2>
+{% endblock %}
+
+{% block content %}
+  <div class="box">
+    <div class="field">
+      <label class="label">Email</label>
+      <div class="control">
+        <input class="input" id="auth-email" type="email" placeholder="you@example.com" />
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Password</label>
+      <div class="control">
+        <input class="input" id="auth-password" type="password" placeholder="At least 6 characters" />
+      </div>
+    </div>
+    <p class="help is-danger" id="auth-message"></p>
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-info" id="auth-login">Log In</button>
+      </div>
+      <div class="control">
+        <button class="button" id="auth-signup">Sign Up</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseClient = supabase.createClient(
+      "{{ config['SUPABASE_URL'] }}",
+      "{{ config['SUPABASE_ANON_KEY'] }}"
+    );
+
+    function setCookieFromSession(session) {
+      if (session) {
+        document.cookie = `sb_access_token=${session.access_token}; path=/; max-age=3600; SameSite=Lax`;
+      }
+    }
+
+    function showMessage(text) {
+      document.getElementById("auth-message").textContent = text;
+    }
+
+    document.getElementById("auth-login").addEventListener("click", async () => {
+      const email = document.getElementById("auth-email").value;
+      const password = document.getElementById("auth-password").value;
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        showMessage(error.message);
+        return;
+      }
+      setCookieFromSession(data.session);
+      window.location.href = "{{ url_for('pages.home') }}";
+    });
+
+    document.getElementById("auth-signup").addEventListener("click", async () => {
+      const email = document.getElementById("auth-email").value;
+      const password = document.getElementById("auth-password").value;
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
+      if (error) {
+        showMessage(error.message);
+        return;
+      }
+      if (data.session) {
+        setCookieFromSession(data.session);
+        window.location.href = "{{ url_for('pages.home') }}";
+      } else {
+        showMessage("Check your email to confirm your account, then log in.");
+      }
+    });
+  </script>
+{% endblock %}

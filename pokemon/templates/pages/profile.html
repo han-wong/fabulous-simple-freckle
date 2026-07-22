@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="box">
+  <h2 class="title is-5">Your Profile</h2>
+
+  {% if user %}
+    <p class="mb-4">Current display name: <strong>{{ user['display_name'] }}</strong></p>
+  {% else %}
+    <p class="mb-4">You haven't set a display name yet. It will appear on the hi-scores leaderboard.</p>
+  {% endif %}
+
+  {% if error %}
+    <p class="help is-danger mb-3">{{ error }}</p>
+  {% endif %}
+
+  <form method="post">
+    <div class="field">
+      <label class="label" for="display_name">Display name</label>
+      <div class="control">
+        <input
+          class="input{% if error %} is-danger{% endif %}"
+          id="display_name"
+          name="display_name"
+          type="text"
+          minlength="3"
+          maxlength="20"
+          placeholder="3–20 characters"
+          value="{{ user['display_name'] if user else '' }}"
+          required
+        />
+      </div>
+      <p class="help">Between 3 and 20 characters. Must be unique.</p>
+    </div>
+    <div class="field">
+      <div class="control">
+        <input class="button is-info" type="submit" value="{{ 'Update name' if user else 'Set name' }}" />
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
