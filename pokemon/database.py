@@ -7,6 +7,7 @@ from flask import current_app, g
 def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+    app.cli.add_command(prune_games_command)
 
     with app.app_context():
         _ensure_db()
@@ -15,6 +16,19 @@ def init_app(app):
 def init_db_command():
     _ensure_db()
     click.echo("You successfully initialized the database!")
+
+@click.command("prune-games")
+@click.option("--days", default=7, help="Delete unfinished games older than this many days.")
+def prune_games_command(days):
+    db = get_db()
+    cur = db.cursor()
+    cur.execute(
+        "DELETE FROM game WHERE player IS NULL AND created < NOW() - INTERVAL %s",
+        (f"{days} days",),
+    )
+    deleted = cur.rowcount
+    db.commit()
+    click.echo(f"Pruned {deleted} unfinished game(s) older than {days} day(s).")
 
 DEFAULT_HI_SCORES = [
     ("Han",     850),

@@ -1,18 +1,33 @@
 {% extends 'base.html' %}
 {% block header %}
-  <h2>
-    {% block title %}
-      Hi-Scores
-    {% endblock %}
-  </h2>
+<h2>
+  {% block title %}
+  Hi-Scores
+  {% endblock %}
+</h2>
 {% endblock %}
 
 {% block content %}
-  <div class="columns is-mobile is-multiline">
+<table class="table is-fullwidth is-striped">
+  <thead>
+    <tr>
+      <th><abbr title="Position">Pos</abbr></th>
+      <th>Player</th>
+      <th>Score</th>
+    </tr>
+  </thead>
+  <tbody>
     {% for game in games %}
-      <div class="column">
-        <div class="box column hi-score">{{ game['player'] }} - {{ game['score'] }}</div>
-      </div>
+    <tr>
+      <th><span class="rank-badge">{{ loop.index }}</span></th>
+      <td>{{ game['player'] }}</td>
+      <td>{{ game['score'] }}</td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="3">No hi-scores yet — be the first!</td>
+    </tr>
     {% endfor %}
-  </div>
+  </tbody>
+</table>
 {% endblock %}

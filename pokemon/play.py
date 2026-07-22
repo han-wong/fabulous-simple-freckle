@@ -4,6 +4,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    session,
     url_for,
 )
 
@@ -31,16 +32,19 @@ def play():
     game = game_logic.get_game(game_id)
     if not game:
         return new_game()
- 
+
+    session["game_id"] = game_id
+
     if request.method == "POST" and request.form:
         current_app.logger.debug(f"request.form = {request.form}")
         player = request.form.get("player-name") or ""
- 
+
         if not game["player"] and 3 <= len(player) <= 10:
             game["player"] = player
             repository.save_game(game)
+            session.pop("game_id", None)
             return redirect(url_for("play.hi_scores"))
- 
+
     (message, hi_score, image) = game_logic.get_game_state(game)
     return render_template(
         "pages/play.html",

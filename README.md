@@ -10,7 +10,7 @@
 ## Initialize git
 - git init
 - git branch -m main
-- git remote add origin git@github.com:han-wong/buttered-oil-vacation.git
+- git remote add origin git@github.com:han-wong/fabulous-simple-freckle.git
 - git fetch origin
 - git branch --set-upstream-to=origin/main main
 - git reset --hard origin/main

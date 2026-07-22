@@ -17,9 +17,11 @@
     {% include '_navigation.html' %}
     <section class="hero is-danger is-fullheight-with-navbar">
       <div class="container hero-body is-flex-direction-column is-flex-grow-0 is-max-desktop mb-3 p-4">
-        {% block content %}
+        <div class="pokedex-screen">
+          {% block content %}
 
-        {% endblock %}
+          {% endblock %}
+        </div>
       </div>
     </section>
     <script src="static/base.js" defer></script>
